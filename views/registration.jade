@@ -1,0 +1,9 @@
+extends layout
+
+block content
+	form(action = "/registration" method = "post")
+		input(type = 'email' name = 'email' required)
+		br
+		input(type = 'password' name = 'pwd' required)
+		br
+		input(type = 'submit' value = 'register')
