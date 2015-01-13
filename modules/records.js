@@ -16,6 +16,14 @@ var selectQueryMaker = function (tableName, retrivalData, where) {
 	return query;
 };
 
+var retrieveWhereToGet = function (resource) {
+	var whereToGet = Object.keys(resource).map(function (key) {
+		return key + ' = "' + resource[key] + '"';
+	}).join(' and ');
+
+	return ' where ' + whereToGet;
+};
+
 var insertInto = function (db, fields, data, tableName, onComplete) {
 	var query = insertQueryMaker(tableName, data, fields);
 	db.run(query, onComplete);
@@ -31,6 +39,11 @@ var _register = function (data, db, onComplete) {
 	var fields = ['email', 'password'];
 	var passingData = [data.email, data.password];
 	insertInto(db, fields, passingData, 'user', onComplete);
+};
+
+var _getPassword = function (email, db, onComplete) {
+	var whereToGet = {email: email};
+	select(db, onComplete, 'user', 'get', ['password'], whereToGet);
 };
 
 var init = function(location){	
@@ -51,7 +64,8 @@ var init = function(location){
 	};
 
 	var records = {
-		register: operate(_register)
+		register: operate(_register),
+		getPassword: operate(_getPassword)
 	};
 	return records;
 };
