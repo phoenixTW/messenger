@@ -1,0 +1,22 @@
+extends layout
+
+block content
+	h1 WELCOME TO INBOX
+	h5
+		a(href = '/logout') logout
+
+	h3 TO #{friend_name}
+
+	div(class = 'messageBody')
+		each message in messages
+			div
+				if message.user_one == friend_id
+					p #{friend_name}
+				else
+					p #{name}
+				p time: #{message.time}
+				p messege: #{message.message}
+				hr
+	form(action = "/send/#{friend_id}" method = "post")
+		textarea(rows = '4' cols = '30' name = 'msg')
+		input(type = "submit" value = "send")

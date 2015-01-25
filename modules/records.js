@@ -46,6 +46,41 @@ var _getPassword = function (email, db, onComplete) {
 	select(db, onComplete, 'user', 'get', ['password'], whereToGet);
 };
 
+var _getUsers = function (db, onComplete) {
+	var retrivalData = ['email', 'u_id'];
+	select(db, onComplete, 'user', 'all', retrivalData);
+};
+
+var _getUserName = function (id, db, onComplete) {
+	var whereToGet = {u_id: id};
+	select(db, onComplete, 'user', 'get', ['email'], whereToGet);
+};
+
+var _insertConversation = function (data, db, onComplete) {
+	var query = selectQueryMaker('user', ['u_id'], {email: data.usr_email});
+	var callback = function (getIdErr, id) {
+		var fields = ['user_one', 'user_two', 'ip', 'time', 'message'];
+		var passingData = [id.u_id, data.friend_id, data.ip, data.time, data.msg];
+		insertInto(db, fields, passingData, 'conversation', onComplete);
+	};
+
+	db.get(query, callback);
+};
+
+var _getConversation = function (info, db, onComplete) {
+	var idSelectQuery = selectQueryMaker('user', ['u_id'], {email: info.usr_email});
+	
+	var callback = function (err, data) {		
+		var messageQuery = "select message, user_one, user_two, time from conversation where (user_one = '" + 
+				data.u_id + "' and user_two = '" + info.friend_id + "') or (user_one = '" +
+				info.friend_id + "' and user_two = '" + data.u_id + "');"
+		
+		db.all(messageQuery, onComplete);
+	};
+
+	db.get(idSelectQuery, callback);
+};
+
 var init = function(location){	
 	var operate = function(operation){
 		return function(){
@@ -65,7 +100,11 @@ var init = function(location){
 
 	var records = {
 		register: operate(_register),
-		getPassword: operate(_getPassword)
+		getPassword: operate(_getPassword),
+		getUsers: operate(_getUsers),
+		getUserName: operate(_getUserName),
+		insertConversation: operate(_insertConversation),
+		getConversation: operate(_getConversation)
 	};
 	return records;
 };

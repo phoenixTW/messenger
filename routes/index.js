@@ -65,8 +65,4 @@ router.get('/logout', requireLogin, function(req,res){
 	res.redirect('/login');
 });
 
-router.get('/dashboard', requireLogin, function (req, res){
-	res.render('dashboard', {email: req.session.userEmail});
-});
-
 module.exports = router;

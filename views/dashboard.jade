@@ -6,3 +6,9 @@ block content
 
 	h5
 		a(href = '/logout') logout
+
+	h2 USER LIST
+		each user in list
+			if user.email != email
+				p
+					a(href = '/message/#{user.u_id}') #{user.email}
